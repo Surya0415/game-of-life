@@ -1,0 +1,32 @@
+stage('push Artifacts'){
+            steps {
+                sh 'mkdir archive'
+                sh 'echo test > archive/test.txt'
+                zip zipFile: 'test.zip', archive: false, dir: 'archive'
+                archiveArtifacts artifacts: 'test.zip', fingerprint: true
+            }
+        }
+
+
+post {
+        failure {
+            script {
+                mail (to: 'email@gmail.com',
+                        //emailext attachLog: true, body: '', compressLog: true, recipientProviders: [buildUser()], subject: 'hello team', to: 'sample@gmail.com'
+                        subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed",
+                        body: "Please visit ${env.BUILD_URL} for further information"
+                );
+                }
+            }
+         success {
+             script {
+                mail (to: 'email@gmail.com',
+                        // emailext attachLog: true, body: '', compressLog: true, recipientProviders: [buildUser()], subject: 'hello team', to: 'sample@gmail.com'
+                        subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) success.",
+                        body: "Please visit ${env.BUILD_URL} for further information.",
+
+
+                  );
+                }
+          }      
+    }
